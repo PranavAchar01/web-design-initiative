@@ -1,0 +1,6 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" fill="#FCE7F3"/>
+  <circle cx="100" cy="80" r="35" fill="#F9A8D4"/>
+  <ellipse cx="100" cy="160" rx="50" ry="40" fill="#F9A8D4"/>
+  <text x="100" y="190" font-family="Arial" font-size="12" fill="#EC4899" text-anchor="middle">Sarah Chen</text>
+</svg>

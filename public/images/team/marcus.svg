@@ -1,0 +1,6 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" fill="#FEF3C7"/>
+  <circle cx="100" cy="80" r="35" fill="#FCD34D"/>
+  <ellipse cx="100" cy="160" rx="50" ry="40" fill="#FCD34D"/>
+  <text x="100" y="190" font-family="Arial" font-size="12" fill="#F59E0B" text-anchor="middle">Marcus Williams</text>
+</svg>
