@@ -150,13 +150,38 @@ A modern web design agency website built with Next.js 16, featuring terminal-sty
 
 ### Post-Deployment
 
-1. **Update Stripe Webhooks** (optional, for production):
+1. **Update Stripe Webhooks** (required for production):
    - Go to Stripe Dashboard → Developers → Webhooks
-   - Add endpoint: `https://yourdomain.com/api/webhooks/stripe`
-   - Select events to listen for
-   - Copy webhook secret to `STRIPE_WEBHOOK_SECRET` in Vercel
+   - Click "Add endpoint"
+   - Enter URL: `https://yourdomain.com/api/webhooks/stripe`
+   - Select events to listen for:
+     - `checkout.session.completed`
+     - `customer.subscription.created`
+     - `customer.subscription.updated`
+     - `customer.subscription.deleted`
+     - `invoice.paid`
+     - `invoice.payment_failed`
+     - `payment_intent.succeeded`
+     - `payment_intent.payment_failed`
+   - Copy the webhook signing secret
+   - Add `STRIPE_WEBHOOK_SECRET` to Vercel environment variables
+   - Redeploy
 
-2. **Configure OAuth Redirect URLs**:
+2. **Test Webhook Locally** (optional):
+   ```bash
+   # Install Stripe CLI
+   brew install stripe/stripe-cli/stripe
+
+   # Login to Stripe
+   stripe login
+
+   # Forward webhooks to local server
+   stripe listen --forward-to localhost:3000/api/webhooks/stripe
+
+   # Copy the webhook secret shown and add to .env as STRIPE_WEBHOOK_SECRET
+   ```
+
+3. **Configure OAuth Redirect URLs** (if using Google OAuth):
    - Google Cloud Console: Add `https://yourdomain.com/api/auth/callback/google`
    - Update `NEXTAUTH_URL` in Vercel to your production domain
 
@@ -203,8 +228,10 @@ web-design-initiative/
 | `NEXTAUTH_SECRET` | Random secret for NextAuth | Yes |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key | Yes |
 | `STRIPE_SECRET_KEY` | Stripe secret key | Yes |
+| `STRIPE_WEBHOOK_SECRET` | Stripe webhook signing secret | Yes (Production) |
 | `STRIPE_STUDENT_PRICE_ID` | Stripe price ID for Student tier | Yes |
 | `STRIPE_PROFESSIONAL_PRICE_ID` | Stripe price ID for Professional tier | Yes |
+| `NEXT_PUBLIC_BASE_URL` | Your site base URL | Yes |
 | `GOOGLE_CLIENT_ID` | Google OAuth client ID | No |
 | `GOOGLE_CLIENT_SECRET` | Google OAuth client secret | No |
 

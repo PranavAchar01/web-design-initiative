@@ -52,7 +52,9 @@ export async function createCheckoutSession(tier: 'student' | 'professional' | '
 
 export async function getCheckoutSession(sessionId: string) {
   try {
-    const session = await stripe.checkout.sessions.retrieve(sessionId)
+    const session = await stripe.checkout.sessions.retrieve(sessionId, {
+      expand: ['line_items', 'customer']
+    })
     return session
   } catch (error) {
     console.error('Failed to retrieve session:', error)
