@@ -307,26 +307,31 @@ function CheckoutButton({ tier, accentColor }: { tier: string, accentColor: stri
   const command = tier === 'Enterprise' ? '$ ./contact.sh' : '$ ./checkout.sh'
 
   return (
-    <div className="mt-8 flex flex-col items-center gap-2">
+    <div className="mt-8 flex flex-col items-center gap-3 w-full">
       <div className="font-mono text-xs text-gray-500">{command}</div>
       <motion.button
         onClick={handleCheckout}
         disabled={isLoading}
-        className="font-mono text-sm px-6 py-2 border transition-all duration-200"
+        className="font-mono font-semibold text-base px-8 py-4 w-full md:w-auto min-w-[200px] transition-all duration-200 rounded shadow-lg"
         style={{
-          borderColor: accentColor,
-          color: accentColor,
-          backgroundColor: 'transparent',
+          backgroundColor: accentColor,
+          color: '#FFFFFF',
+          boxShadow: `0 4px 12px ${accentColor}40`,
         }}
         whileHover={{
-          backgroundColor: accentColor,
-          color: '#0D121E',
-          scale: 1.02
+          scale: 1.02,
+          boxShadow: `0 6px 20px ${accentColor}60`,
         }}
         whileTap={{ scale: 0.98 }}
       >
-        {isLoading ? '> Loading...' : `> ${buttonText}`}
+        {isLoading ? '> Processing...' : `${buttonText}`}
       </motion.button>
+      <div className="flex items-center gap-2 text-xs text-gray-400 mt-1">
+        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+        </svg>
+        <span>Secure checkout powered by Stripe</span>
+      </div>
     </div>
   )
 }
@@ -346,16 +351,16 @@ export default function PurchasePage() {
       <ParticleSystem />
 
       {/* Page Content */}
-      <div className="relative z-10 w-full h-full flex items-center justify-center py-20">
-        {/* Service Tiers - Text Only */}
-        <div className="w-full h-full flex items-center justify-center gap-32 px-20">
+      <div className="relative z-10 w-full h-full flex items-center justify-center py-10 md:py-20">
+        {/* Service Tiers - Responsive Layout */}
+        <div className="w-full h-full flex flex-col md:flex-row items-center justify-center gap-12 md:gap-20 lg:gap-32 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto">
           {tiers.map((tier, index) => (
             <motion.div
               key={tier.name}
-              className="flex flex-col items-center justify-center flex-1"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: index * 0.3 }}
+              className="flex flex-col items-center justify-center w-full md:flex-1 max-w-sm"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.2 }}
             >
               {/* Command Header */}
               <div className="font-mono text-sm text-gray-400 mb-6">
@@ -363,19 +368,19 @@ export default function PurchasePage() {
               </div>
 
               {/* Tier Name */}
-              <h2 className="font-mono text-2xl font-bold mb-4">
+              <h2 className="font-mono text-2xl md:text-3xl font-bold mb-4">
                 <TypewriterText text={tier.name} delay={index * 60 + 100} speed={8} style={{ color: tier.accentColor }} />
               </h2>
 
               {/* Price */}
-              <div className="text-3xl font-bold mb-8 font-mono">
+              <div className="text-3xl md:text-4xl font-bold mb-8 font-mono">
                 <TypewriterText text={tier.price} delay={index * 60 + 180} speed={8} style={{ color: tier.accentColor }} />
               </div>
 
               {/* Services List */}
-              <ul className="space-y-2 text-center">
+              <ul className="space-y-2 text-center mb-4">
                 {tier.services.map((service, i) => (
-                  <li key={i} className="text-gray-300 font-mono text-sm">
+                  <li key={i} className="text-gray-200 font-mono text-sm md:text-base">
                     {service}
                   </li>
                 ))}
