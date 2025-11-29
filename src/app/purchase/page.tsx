@@ -284,22 +284,31 @@ function ParticleSystem() {
 function CheckoutButton({ tier, accentColor }: { tier: string, accentColor: string }) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState(false)
 
   const handleCheckout = async () => {
     setIsLoading(true)
+    setError(null)
+
     try {
       const tierKey = tier.toLowerCase() as 'student' | 'professional' | 'enterprise'
       const result = await createCheckoutSession(tierKey)
 
       if ('isContactForm' in result && result.isContactForm) {
-        router.push(result.url!)
+        setSuccess(true)
+        setTimeout(() => router.push(result.url!), 800)
       } else if (result.url) {
-        window.location.href = result.url
+        setSuccess(true)
+        setTimeout(() => window.location.href = result.url, 800)
       }
     } catch (error) {
       console.error('Checkout error:', error)
-      alert('Failed to start checkout. Please try again.')
+      setError('Unable to start checkout. Please try again or contact support.')
       setIsLoading(false)
+
+      // Clear error after 5 seconds
+      setTimeout(() => setError(null), 5000)
     }
   }
 
@@ -311,21 +320,56 @@ function CheckoutButton({ tier, accentColor }: { tier: string, accentColor: stri
       <div className="font-mono text-xs text-gray-500">{command}</div>
       <motion.button
         onClick={handleCheckout}
-        disabled={isLoading}
-        className="font-mono font-semibold text-base px-8 py-4 w-full md:w-auto min-w-[200px] transition-all duration-200 rounded shadow-lg"
+        disabled={isLoading || success}
+        className="font-mono font-semibold text-base px-8 py-4 w-full md:w-auto min-w-[200px] transition-all duration-200 rounded shadow-lg relative overflow-hidden"
         style={{
-          backgroundColor: accentColor,
+          backgroundColor: success ? '#22C55E' : accentColor,
           color: '#FFFFFF',
-          boxShadow: `0 4px 12px ${accentColor}40`,
+          boxShadow: success ? '0 4px 12px #22C55E40' : `0 4px 12px ${accentColor}40`,
+          opacity: isLoading || success ? 0.9 : 1,
         }}
         whileHover={{
-          scale: 1.02,
-          boxShadow: `0 6px 20px ${accentColor}60`,
+          scale: isLoading || success ? 1 : 1.02,
+          boxShadow: success ? '0 6px 20px #22C55E60' : `0 6px 20px ${accentColor}60`,
         }}
         whileTap={{ scale: 0.98 }}
       >
-        {isLoading ? '> Processing...' : `${buttonText}`}
+        {isLoading ? (
+          <span className="flex items-center gap-2 justify-center">
+            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+            </svg>
+            Processing...
+          </span>
+        ) : success ? (
+          <span className="flex items-center gap-2 justify-center">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            Redirecting...
+          </span>
+        ) : (
+          buttonText
+        )}
       </motion.button>
+
+      {/* Error Message */}
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+          className="flex items-start gap-2 text-xs text-red-400 bg-red-500 bg-opacity-10 border border-red-500 border-opacity-30 rounded px-3 py-2 max-w-[280px]"
+        >
+          <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
+          <span>{error}</span>
+        </motion.div>
+      )}
+
+      {/* Trust Signal */}
       <div className="flex items-center gap-2 text-xs text-gray-400 mt-1">
         <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
           <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
@@ -357,10 +401,19 @@ export default function PurchasePage() {
           {tiers.map((tier, index) => (
             <motion.div
               key={tier.name}
-              className="flex flex-col items-center justify-center w-full md:flex-1 max-w-sm"
+              className="flex flex-col items-center justify-center w-full md:flex-1 max-w-sm p-8 md:p-10 rounded-lg transition-all duration-300 group"
+              style={{
+                border: `1px solid ${tier.accentColor}20`,
+                backgroundColor: 'rgba(13, 18, 30, 0.3)',
+              }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.2 }}
+              whileHover={{
+                scale: 1.02,
+                boxShadow: `0 8px 32px ${tier.accentColor}20, 0 0 0 1px ${tier.accentColor}40`,
+                backgroundColor: 'rgba(13, 18, 30, 0.5)',
+              }}
             >
               {/* Command Header */}
               <div className="font-mono text-sm text-gray-400 mb-6">
@@ -378,11 +431,26 @@ export default function PurchasePage() {
               </div>
 
               {/* Services List */}
-              <ul className="space-y-2 text-center mb-4">
+              <ul className="space-y-2 text-center mb-4 w-full">
                 {tier.services.map((service, i) => (
-                  <li key={i} className="text-gray-200 font-mono text-sm md:text-base">
-                    {service}
-                  </li>
+                  <motion.li
+                    key={i}
+                    className="text-gray-200 font-mono text-sm md:text-base flex items-center justify-center gap-2 py-1 px-3 rounded transition-all duration-200 group"
+                    whileHover={{ x: 4 }}
+                  >
+                    <svg
+                      className="w-4 h-4 flex-shrink-0 transition-all duration-200"
+                      style={{ color: tier.accentColor }}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="group-hover:text-white transition-colors duration-200">
+                      {service}
+                    </span>
+                  </motion.li>
                 ))}
               </ul>
 
