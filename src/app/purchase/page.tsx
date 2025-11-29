@@ -352,7 +352,7 @@ export default function PurchasePage() {
           {tiers.map((tier, index) => (
             <motion.div
               key={tier.name}
-              className="flex flex-col items-center justify-center flex-1"
+              className="flex flex-col items-center justify-center flex-1 border border-white p-8 rounded"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: index * 0.3 }}
