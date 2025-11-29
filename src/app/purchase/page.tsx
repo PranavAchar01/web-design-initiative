@@ -376,7 +376,7 @@ export default function PurchasePage() {
               <ul className="space-y-2 text-center">
                 {tier.services.map((service, i) => (
                   <li key={i} className="text-gray-300 font-mono text-sm">
-                    <TypewriterText text={service} delay={index * 60 + 260 + (i * 7)} speed={0.67} />
+                    <TypewriterText text={service} delay={index * 60 + 260 + (i * 150)} speed={8} />
                   </li>
                 ))}
               </ul>
